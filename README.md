@@ -1,9 +1,11 @@
 # Torch量化demo
 
 使用分类网络进行torch量化实验, 数据集为Cifar10
-参数如下
-训练epoch:10
-QAT训练epoch：10
+
+参数如下:
+
+- 训练epoch:10
+- QAT训练epoch：10
 
 数据如下
 
