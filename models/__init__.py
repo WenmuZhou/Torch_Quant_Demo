@@ -14,5 +14,5 @@ __all__ = [
 
 
 def build_model(name, *args, **kwargs):
-    assert name in __all__, print(f'{name} is not in {__all__}')
+    assert name in __all__, f'{name} is not in {__all__}'
     return eval(name)(*args, **kwargs)
