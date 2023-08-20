@@ -19,7 +19,7 @@ def ptq(
     eval_top1, eval_top5 = evaluate(quantized_model, test_loader, "cpu")
     print(f"Evaluation accuracy, Top1: {eval_top1:.2f}, Top5: {eval_top5:.2f}")
 
-    to_onnx(quantized_model, [1, 3, 64, 64], scripted_model_file + ".onnx")
+    to_onnx(quantized_model, input_shape, scripted_model_file + ".onnx")
 
     script_model = torch.jit.script(quantized_model)
     torch.jit.save(script_model, scripted_model_file)
@@ -47,7 +47,7 @@ def qat(
     print("Size of model after quantization")
     print_size_of_model(quantized_model)
 
-    to_onnx(quantized_model, [1, 3, 64, 64], scripted_model_file + ".onnx")
+    to_onnx(quantized_model, input_shape, scripted_model_file + ".onnx")
 
     script_model = torch.jit.script(quantized_model)
     torch.jit.save(script_model, scripted_model_file)
