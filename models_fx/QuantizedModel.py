@@ -6,12 +6,12 @@ from torch.ao.quantization import quantize_fx
 
 
 class QuantizedModel(nn.Module):
-    def __init__(self, model_fp32):
+    def __init__(self, model_fp32, backend='x86'):
         super(QuantizedModel, self).__init__()
         # FP32 model
         self.model_fp32 = copy.deepcopy(model_fp32)
         self.model_fp32.eval()
-        self.qconfig = {"": torch.ao.quantization.get_default_qat_qconfig("x86")}
+        self.qconfig = {"": torch.ao.quantization.get_default_qat_qconfig(backend)}
 
     def quantize_qat(
         self,

@@ -5,7 +5,7 @@ from torch import nn
 
 
 class QuantizedModel(nn.Module):
-    def __init__(self, model_fp32):
+    def __init__(self, model_fp32, backend='x86'):
         super(QuantizedModel, self).__init__()
         # QuantStub converts tensors from floating point to quantized.
         # This will only be used for inputs.
@@ -17,7 +17,7 @@ class QuantizedModel(nn.Module):
         self.model_fp32 = copy.deepcopy(model_fp32)
         self.model_fp32.eval()
         self.model_fp32.fuse_model()
-        self.qconfig = torch.ao.quantization.get_default_qat_qconfig("x86")
+        self.qconfig = torch.ao.quantization.get_default_qat_qconfig(backend)
 
     def forward(self, x):
         # manually specify where tensors will be converted from floating

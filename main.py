@@ -97,7 +97,7 @@ def main(model_name="MobileNetV2", num_epochs=10, fx=True):
     torch.jit.save(torch.jit.script(float_model), scripted_float_model_file)
 
     ptq(
-        QuantizedModel(float_model),
+        QuantizedModel(float_model, backend='x86'),
         train_loader,
         test_loader,
         device,
@@ -105,7 +105,7 @@ def main(model_name="MobileNetV2", num_epochs=10, fx=True):
         input_shape,
     )
     qat(
-        QuantizedModel(float_model),
+        QuantizedModel(float_model, backend='x86'),
         train_loader,
         test_loader,
         device,
