@@ -1,6 +1,8 @@
 import copy
-from torch import nn
+
 import torch
+from torch import nn
+
 
 class QuantizedModel(nn.Module):
     def __init__(self, model_fp32):
@@ -15,7 +17,7 @@ class QuantizedModel(nn.Module):
         self.model_fp32 = copy.deepcopy(model_fp32)
         self.model_fp32.eval()
         self.model_fp32.fuse_model()
-        self.qconfig = torch.ao.quantization.get_default_qat_qconfig('x86')
+        self.qconfig = torch.ao.quantization.get_default_qat_qconfig("x86")
 
     def forward(self, x):
         # manually specify where tensors will be converted from floating
@@ -26,10 +28,20 @@ class QuantizedModel(nn.Module):
         # to floating point in the quantized model
         x = self.dequant(x)
         return x
-    
-    def quantize_qat(self, train_fn, train_args, eval_fn=None, eval_args=None, inplace=False):
+
+    def quantize_qat(
+        self,
+        train_fn,
+        train_args,
+        eval_fn=None,
+        eval_args=None,
+        inplace=False,
+        **kwargs
+    ):
         if not inplace:
             model = copy.deepcopy(self)
+        else:
+            model = self
         model.train()
         torch.ao.quantization.prepare_qat(model, inplace=True)
         # Run qat
@@ -38,18 +50,21 @@ class QuantizedModel(nn.Module):
         if eval_fn is not None:
             eval_result = eval_fn(model, *eval_args)
             print(eval_result)
-        model.to('cpu')
+        model.to("cpu")
         # Convert to quantized model
-        torch.quantization.convert(model, inplace=True)
         model.eval()
+        torch.quantization.convert(model, inplace=True)
         return model
-    
-    def quantize_ptq(self, run_fn, run_args, inplace=False):
+
+    def quantize_ptq(self, run_fn, run_args, inplace=False, **kwargs):
         if not inplace:
             model = copy.deepcopy(self)
+        else:
+            model = self
+        model.eval()
         torch.ao.quantization.prepare(model, inplace=True)
         # Calibrate with the dataset
         run_fn(model, *run_args)
         # Convert to quantized model
-        torch.ao.quantization.convert(model.to('cpu'), inplace=True)
+        torch.ao.quantization.convert(model.to("cpu"), inplace=True)
         return model
