@@ -61,13 +61,13 @@ def main(model_name="MobileNetV2", num_epochs=10, fx=True):
         from models_eager import build_model
         from models_eager.QuantizedModel import QuantizedModel
     saved_model_dir = "output/"
-    float_model_file = os.path.join(saved_model_dir, "float32.pth")
-    scripted_float_model_file = os.path.join(saved_model_dir, "float32_scripted.pth")
+    float_model_file = os.path.join(saved_model_dir, f"{model_name}_fp32.pth")
+    scripted_float_model_file = os.path.join(saved_model_dir, f"{model_name}_fp32_scripted.pth")
     scripted_ptq_model_file = os.path.join(
-        saved_model_dir, "ptq_scripted_quantized.pth"
+        saved_model_dir, f"{model_name}_ptq_scripted_quantized.pth"
     )
     scripted_qat_model_file = os.path.join(
-        saved_model_dir, "qat_scripted_quantized.pth"
+        saved_model_dir, f"{model_name}_qat_scripted_quantized.pth"
     )
 
     train_loader, test_loader = prepare_dataloader(8, 512, 256)
@@ -90,7 +90,7 @@ def main(model_name="MobileNetV2", num_epochs=10, fx=True):
 
     print("Size of fp32 model")
     print_size_of_model(float_model)
-
+    
     eval_top1, eval_top5 = evaluate(float_model, test_loader, device)
     print(f"Evaluation accuracy, {eval_top1:.2f}")
     to_onnx(float_model, input_shape, float_model_file + ".onnx")

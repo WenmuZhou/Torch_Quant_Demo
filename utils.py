@@ -61,7 +61,6 @@ def evaluate(model, data_loader, device):
             acc1, acc5 = accuracy(output, target, topk=(1, 5))
             top1.update(acc1[0], image.size(0))
             top5.update(acc5[0], image.size(0))
-    model.train()
     return top1.avg, top5.avg
 
 
